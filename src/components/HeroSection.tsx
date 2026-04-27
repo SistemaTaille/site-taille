@@ -142,7 +142,7 @@ const HeroSection = () => {
           >
             <div className="flex items-center gap-2">
               <span className="text-primary font-display font-bold text-xl">
-                <AnimatedCounter value={30} duration={2000} suffix="%+" />
+                <AnimatedCounter value={30} duration={5000} suffix="%+" />
               </span>
               <span>de lucratividade<br/>alcançada</span>
             </div>
