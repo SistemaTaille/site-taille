@@ -20,10 +20,14 @@ const testimonials = [
   },
 ];
 
-const VIDEO_EMBED_URL = "https://www.youtube.com/embed/SO97KZH9_7U";
+const videos = [
+  { id: "SO97KZH9_7U", label: "Depoimento Taille" },
+  { id: "XXSsEGEItD4", label: "Depoimento Taille" },
+  { id: "9of-6kiEhyY", label: "Depoimento Taille" },
+];
 
 const TestimonialsSection = () => {
-  const [videoOpen, setVideoOpen] = useState(false);
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   return (
     <section id="depoimentos" className="py-24 bg-background">
@@ -45,40 +49,47 @@ const TestimonialsSection = () => {
           </p>
         </motion.div>
 
-        {/* Video Testimonial */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto mb-12"
-        >
-          <button
-            onClick={() => setVideoOpen(true)}
-            className="relative w-full aspect-video rounded-xl overflow-hidden group cursor-pointer border border-border shadow-card hover:shadow-card-hover transition-shadow"
-          >
-            <div className="absolute inset-0 bg-secondary flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-gold">
-                  <Play className="w-8 h-8 text-primary-foreground ml-1" />
+        {/* Video Testimonials */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+          {videos.map((video, i) => (
+            <motion.button
+              key={video.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              onClick={() => setActiveVideo(video.id)}
+              className="relative aspect-[9/16] rounded-xl overflow-hidden group cursor-pointer border border-border shadow-card hover:shadow-card-hover transition-shadow"
+            >
+              <img
+                src={`https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`}
+                onError={(e) => {
+                  const img = e.currentTarget as HTMLImageElement;
+                  if (!img.src.includes("hqdefault")) {
+                    img.src = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+                  }
+                }}
+                alt={video.label}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-secondary/20 to-transparent" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-110 transition-transform shadow-gold">
+                  <Play className="w-7 h-7 text-primary-foreground ml-1" />
                 </div>
-                <p className="text-secondary-foreground font-display font-semibold text-lg">
-                  Veja o depoimento de quem usa o Taille
-                </p>
-                <p className="text-secondary-foreground/60 text-sm mt-1">
-                  Clique para assistir
-                </p>
               </div>
-            </div>
-          </button>
-        </motion.div>
+            </motion.button>
+          ))}
+        </div>
 
-        <Dialog open={videoOpen} onOpenChange={setVideoOpen}>
+        <Dialog open={!!activeVideo} onOpenChange={(open) => !open && setActiveVideo(null)}>
           <DialogContent className="max-w-[420px] p-0 overflow-hidden bg-black border-none">
             <DialogTitle className="sr-only">Depoimento em vídeo</DialogTitle>
             <div className="aspect-[9/16] w-full">
-              {videoOpen && (
+              {activeVideo && (
                 <iframe
-                  src={`${VIDEO_EMBED_URL}?autoplay=1`}
+                  src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1`}
                   title="Depoimento Taille"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
